@@ -32,6 +32,13 @@ WhereTZ.get(50.004444, 36.231389)
 # you should have tzinfo gem installed, wheretz doesn't list it as dependency
 ```
 
+From commandline, after gem installed:
+
+```bash
+wheretz 50.004444,36.231389
+# => Europe/Kiev
+```
+
 ## How it works
 
 1. Latest version of [tz_world_map](http://efele.net/maps/tz/world/) is

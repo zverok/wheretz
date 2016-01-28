@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'wheretz'
+
+if ARGV.empty? or ['-h', '--help'].include?(ARGV.first)
+  puts "Usage: `wheretz lat,lng`"
+  exit
+end
+
+latlng = ARGV.shift
+if latlng.end_with?(',') && ARGV.first
+  latlng += ARGV.shift
+end
+
+lat, lng = latlng.split(/\s*,\s*/).map(&:to_f)
+
+if (res = WhereTZ.lookup(lat, lng))
+  puts res
+else
+  puts "Time zone not found"
+end
+
