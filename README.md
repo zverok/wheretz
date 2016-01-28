@@ -47,3 +47,31 @@ WhereTZ.get(50.004444, 36.231389)
 
 ## Known problems
 
+* On "bounding box only" check, some points deeply in sea (and actally
+  belonging to no timezone polygon) can be wrongfly guessed as belonging
+  to some timezone;
+* Loading/unloading `.geojson` files can be uneffective when called
+  multiple times; future releases will provide option for preserve
+  data in memory, or for mass lookup of points;
+* Data conversion performed by pretty ugly script (instead of Rake task
+  as it should be).
+
+## Author
+
+[Victor Shepelev](http://zverok.github.io/)
+
+## License
+
+Data license is described at [tz_world_map](http://efele.net/maps/tz/world/)
+and reads like:
+
+>  To the extent possible under law, Eric Muller has waived all copyright
+  and related or neighboring rights to the efele.net/tz maps (comprising
+  the shapefiles, the web pages describing them and the scripts and data
+  used to build them). This work is published from the United States of
+  America.
+
+> Note that this does not affect the rights others may have. I am not
+  qualified to determine whether such rights exist.
+
+Code license is usual MIT.
