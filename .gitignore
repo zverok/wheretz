@@ -1,0 +1,5 @@
+vendor
+.bundle
+Gemfile.lock
+tmp
+script/data
