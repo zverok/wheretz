@@ -1,8 +1,19 @@
 require 'geo_ruby'
 require 'geo_ruby/geojson'
 
-# WhereTZ is ...
+# WhereTZ is quick and simple time zone lookup by geographic point.
+#
+# Usage:
+#
+# ```ruby
+# WhereTZ.lookup(50.004444, 36.231389)
+# # => 'Europe/Kiev'
+# 
+# WhereTZ.get(50.004444, 36.231389)
+# # => #<TZInfo::DataTimezone: Europe/Kiev>
+# ```
 module WhereTZ
+  # @private
   FILES =
     Dir[File.expand_path('../../data/*.geojson', __FILE__)].
     map{|f|
@@ -13,10 +24,19 @@ module WhereTZ
       [f, zone, minx..maxx, miny..maxy]
     }.freeze
 
+  # Exception (possibly) raised when point is inside several
+  # time zone polygons simultaneously.
   AmbigousTimezone = Class.new(RuntimeError)
 
   module_function
 
+  # Time zone name by coordinates.
+  #
+  # @param lat Latitude (floating point number)
+  # @param lng Longitude (floating point number)
+  #
+  # @return [String] time zone name or `nil` if no time zone corresponds
+  #   to (lat, lng)
   def lookup(lat, lng)
     candidates =
       FILES.
@@ -30,6 +50,16 @@ module WhereTZ
     end
   end
 
+  # `TZInfo::DataTimezone` object by coordinates.
+  #
+  # Note that you should add `tzinfo` to your Gemfile to use this method.
+  # `wheretz` doesn't depend on `tzinfo` by itself.
+  #
+  # @param lat Latitude (floating point number)
+  # @param lng Longitude (floating point number)
+  #
+  # @return [TZInfo::DataTimezone] timezone object or `nil` if no
+  #   timezone corresponds to (lat, lng)
   def get(lat, lng)
     begin
       require 'tzinfo'
