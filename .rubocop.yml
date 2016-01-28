@@ -1,0 +1,28 @@
+AllCops:
+  Include:
+    - 'lib/**/*'
+  Exclude:
+    - 'spec/**/*'
+    - 'vendor/**/*'
+    - 'script/**/*'
+
+Style/BlockDelimiters:
+  Enabled: false
+
+Style/SpaceBeforeBlockBraces: 
+  Enabled: false
+
+Style/SpaceInsideBlockBraces: 
+  Enabled: false
+
+Style/DotPosition:
+  EnforcedStyle: trailing
+
+Style/MultilineBlockChain:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 17
+
+Metrics/MethodLength:
+  Max: 15
