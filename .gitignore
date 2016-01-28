@@ -2,4 +2,5 @@ vendor
 .bundle
 Gemfile.lock
 tmp
-script/data
+script/data/*.*
+script/data/**/*.*
