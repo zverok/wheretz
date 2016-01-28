@@ -60,6 +60,7 @@ wheretz 50.004444,36.231389
 * Loading/unloading `.geojson` files can be uneffective when called
   multiple times; future releases will provide option for preserve
   data in memory, or for mass lookup of points;
+* You should note that gem has ≈50 MiB of datafiles inside;
 * Data conversion performed by pretty ugly script (instead of Rake task
   as it should be).
 
