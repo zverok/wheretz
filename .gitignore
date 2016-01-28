@@ -6,3 +6,4 @@ script/data/*.*
 script/data/**/*.*
 doc
 .yardoc
+pkg
