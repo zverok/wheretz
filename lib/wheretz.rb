@@ -15,7 +15,8 @@ require 'geo_ruby/geojson'
 module WhereTZ
   # @private
   FILES =
-    Dir[File.expand_path('../../data/*.geojson', __FILE__)].
+    Dir[File.expand_path('../../data/simplified/*.geojson', __FILE__)].
+    reject{|f| f.include?('world.geojson')}.
     map{|f|
       name = File.basename(f).sub('.geojson', '')
       zone, *coords = name.split('__')
