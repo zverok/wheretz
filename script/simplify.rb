@@ -4,7 +4,7 @@ require 'fileutils'
 require 'rgeo'
 require 'rgeo/geo_json'
 
-TOLERANCE = 0.04 # Don't know, faithfully... Just guessed it or something like this.
+TOLERANCE = 0.1 # Don't know, faithfully... Just guessed it or something like this.
 
 all_features = []
 
