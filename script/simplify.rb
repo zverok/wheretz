@@ -4,20 +4,18 @@ require 'fileutils'
 require 'rgeo'
 require 'rgeo/geo_json'
 
-TOLERANCE = 0.1
+TOLERANCE = 0.04 # Don't know, faithfully... Just guessed it or something like this.
 
 all_features = []
 
-FileUtils.mkdir_p 'data/simplified'
-
-Dir['data/*.geojson'].each_with_progress do |file|
+Dir['script/data/*.geojson'].each_with_progress do |file|
   collection = RGeo::GeoJSON.decode(File.read(file), json_parser: :json)
   sgeom = collection.first.geometry.simplify_preserve_topology(TOLERANCE)
   sfeature = RGeo::GeoJSON::Feature.new(sgeom, nil, collection.first.properties)
   all_features << sfeature
   scoll = RGeo::GeoJSON::FeatureCollection.new([sfeature])
-  File.write(file.sub('data/', 'data/simplified/'), RGeo::GeoJSON.encode(scoll).to_json)
+  File.write(file.sub('script/data/', 'data/'), RGeo::GeoJSON.encode(scoll).to_json)
 end
 
 all_coll = RGeo::GeoJSON::FeatureCollection.new(all_features)
-File.write('data/simplified/world.geojson', RGeo::GeoJSON.encode(all_coll).to_json)
+File.write('demo/world.geojson', RGeo::GeoJSON.encode(all_coll).to_json)

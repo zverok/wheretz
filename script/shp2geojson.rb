@@ -10,7 +10,7 @@ shapefile.with_progress.map{|shp|
   name = shp.data.attributes['TZID']
   next if name == 'uninhabited'
   
-  fname = "data/%s__%.4f__%.4f__%.4f__%.4f.geojson" % [name.gsub('/', '-'), bmin.x, bmax.x, bmin.y, bmax.y]
+  fname = "script/data/%s__%.4f__%.4f__%.4f__%.4f.geojson" % [name.gsub('/', '-'), bmin.x, bmax.x, bmin.y, bmax.y]
   File.write(fname,
     {
       "type" => "FeatureCollection",

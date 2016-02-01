@@ -15,8 +15,7 @@ require 'geo_ruby/geojson'
 module WhereTZ
   # @private
   FILES =
-    Dir[File.expand_path('../../data/simplified/*.geojson', __FILE__)].
-    reject{|f| f.include?('world.geojson')}.
+    Dir[File.expand_path('../../data/*.geojson', __FILE__)].
     map{|f|
       name = File.basename(f).sub('.geojson', '')
       zone, *coords = name.split('__')
@@ -78,13 +77,19 @@ module WhereTZ
 
   module_function
 
+  class GeoRuby::SimpleFeatures::MultiPolygon
+    def contains_point?(point)
+      geometries.any?{|polygon| polygon.contains_point?(point)}
+    end
+  end
+
   def lookup_geo(lat, lng, candidates)
     point = GeoRuby::SimpleFeatures::Point.from_coordinates([lng, lat])
 
     candidates = candidates.map{|fname, zone, *|
       [zone, PARSER.parse(File.read(fname)).features.first.geometry]
-    }.select{|_, multipolygon|
-      multipolygon.geometries.any?{|polygon| polygon.contains_point?(point)}
+    }.select{|_, polygon|
+      polygon.contains_point?(point)
     }
 
     case candidates.size
