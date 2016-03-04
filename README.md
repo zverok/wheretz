@@ -51,11 +51,14 @@ wheretz 50.004444,36.231389
 4. If there's several intersecting bounding boxes, `WhereTZ` reads only
   relevant timezone files (which are not very large) and checks which
   polygon actually contains the point.
+5. **Added in 0.0.2** If point occures outside any of polygons, find
+  the closest one (it's last resort for really rare cases and slower
+  than other approaches).
 
 ## Known problems
 
-* On "bounding box only" check, some points deeply in sea (and actally
-  belonging to no timezone polygon) can be wrongfly guessed as belonging
+* On "bounding box only" check, some points deeply in sea (and actually
+  belonging to no timezone polygon) can be wrongly guessed as belonging
   to some timezone;
 * Loading/unloading `.geojson` files can be uneffective when called
   multiple times; future releases will provide option for preserve
