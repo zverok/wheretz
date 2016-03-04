@@ -18,6 +18,11 @@ describe WhereTZ do
       it{should == 'Europe/Kiev'}
     end
 
+    context 'edge case' do
+      let(:lat_lng){ [43.6605555555556, 7.2175] }
+      it{should == 'Europe/Paris'}
+    end
+
     context 'no timezone' do
       let(:lat_lng){ [35.024992,-39.481339] } # middle of the ocean
       it{should be_nil}

@@ -8,7 +8,7 @@ require 'geo_ruby/geojson'
 # ```ruby
 # WhereTZ.lookup(50.004444, 36.231389)
 # # => 'Europe/Kiev'
-# 
+#
 # WhereTZ.get(50.004444, 36.231389)
 # # => #<TZInfo::DataTimezone: Europe/Kiev>
 # ```
@@ -80,17 +80,36 @@ module WhereTZ
   def lookup_geo(lat, lng, candidates)
     point = GeoRuby::SimpleFeatures::Point.from_coordinates([lng, lat])
 
-    candidates = candidates.map{|fname, zone, *|
+    polygons = candidates.map{|fname, zone, *|
       [zone, PARSER.parse(File.read(fname)).features.first.geometry]
-    }.select{|_, multipolygon|
+    }
+    candidates = polygons.select{|_, multipolygon|
       multipolygon.geometries.any?{|polygon| polygon.contains_point?(point)}
     }
 
     case candidates.size
-    when 0 then nil
+    when 0 then guess_outside(point, polygons)
     when 1 then candidates.first.first
     else
       fail(AmbigousTimezone, "Ambigous timezone: #{candidates.map(&:first)}")
     end
+  end
+
+  # Last resort: pretty slow check for the cases when the point
+  # is slightly outside polygons.
+  # See https://github.com/zverok/wheretz/issues/4
+  def guess_outside(point, polygons)
+    # create pairs [timezone, distance to closest point of its polygon]
+    distances = polygons.map{|zone, multipolygon|
+      [
+        zone,
+        multipolygon.geometries.map(&:rings).flatten.
+          map{|p| p.ellipsoidal_distance(point)}.min
+      ]
+    }
+
+    # FIXME: maybe need some tolerance range for maximal reasonable distance?
+
+    distances.sort_by(&:last).first.first
   end
 end

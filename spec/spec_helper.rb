@@ -1,4 +1,4 @@
-require 'simplecov'
+#require 'simplecov'
 
 $:.unshift 'lib'
 require 'wheretz'

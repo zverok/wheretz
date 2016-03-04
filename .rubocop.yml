@@ -2,6 +2,7 @@ AllCops:
   Include:
     - 'lib/**/*'
   Exclude:
+    - 'bin/**/*'
     - 'spec/**/*'
     - 'vendor/**/*'
     - 'script/**/*'
@@ -22,7 +23,7 @@ Style/MultilineBlockChain:
   Enabled: false
 
 Metrics/AbcSize:
-  Max: 17
+  Max: 18
 
 Metrics/MethodLength:
   Max: 15
