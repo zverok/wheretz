@@ -1,14 +1,17 @@
+require: rubocop-rspec
+
 AllCops:
   Include:
     - 'lib/**/*'
+    - 'spec/**/*'
   Exclude:
     - 'bin/**/*'
-    - 'spec/**/*'
     - 'vendor/**/*'
     - 'script/**/*'
 
 Metrics/LineLength:
   Max: 100
+  IgnoredPatterns: ['\#.*'] # ignore long comments
 
 Style/BlockDelimiters:
   Enabled: false
@@ -21,3 +24,16 @@ Style/MultilineBlockChain:
 
 Metrics/MethodLength:
   Max: 15
+
+RSpec/ImplicitSubject:
+  Enabled: false
+
+RSpec/EmptyExampleGroup:
+  CustomIncludeMethods: [its_call, its_map]
+
+RSpec/FilePath:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'

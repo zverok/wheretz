@@ -1,57 +1,37 @@
 describe WhereTZ do
-  describe :lookup do
-    subject{WhereTZ.lookup(*lat_lng)}
+  describe '#lookup' do
+    subject { described_class.method(:lookup) }
 
-    context 'unambiguous bounding box' do
-      let(:lat_lng){ [55.75, 37.616667]} # Moscow
-      before{
-        expect(File).not_to receive(:read)
+    context 'when unambiguous bounding box: Moscow' do
+      its_call(55.75, 37.616667) { is_expected.to ret('Europe/Moscow') }
+      its_call(55.75, 37.616667) { is_expected.not_to send_message(File, :read) }
+    end
+
+    context 'when ambiguous bounding box: Kharkiv' do
+      before {
+        expect(File).to receive(:read).twice.and_call_original # rubocop:disable RSpec/ExpectInHook,RSpec/MessageSpies
       }
-      it{should == 'Europe/Moscow'}
+
+      its_call(50.004444, 36.231389) { is_expected.to ret 'Europe/Kiev' }
     end
 
-    context 'ambiguous bounding box' do
-      let(:lat_lng){ [50.004444, 36.231389] } # Kharkiv
-      before{
-        expect(File).to receive(:read).exactly(2).times.and_call_original
-      }
-      it{should == 'Europe/Kiev'}
+    context 'when edge case' do
+      its_call(43.6605555555556, 7.2175) { is_expected.to ret 'Europe/Paris' }
     end
 
-    context 'edge case' do
-      let(:lat_lng){ [43.6605555555556, 7.2175] }
-      it{should == 'Europe/Paris'}
+    context 'when no timezone: middle of the ocean' do
+      its_call(35.024992, -39.481339) { is_expected.to ret be_nil }
     end
 
-    context 'no timezone' do
-      let(:lat_lng){ [35.024992,-39.481339] } # middle of the ocean
-      it{should be_nil}
+    xcontext 'when ambiguous timezones' do
+      its_call(125.60, 69.11) { is_expected.to ret be_nil }
     end
   end
 
-  describe :get do
+  describe '#get' do
+    subject { described_class.method(:get) }
 
-    context 'when found' do
-      let(:lat_lng){ [55.75, 37.616667]}
-      subject{WhereTZ.get(*lat_lng)}
-      it{should == TZInfo::Timezone.get('Europe/Moscow')}
-    end
-
-    context 'when notfound' do
-      let(:lat_lng){ [35.024992,-39.481339]}
-      subject{WhereTZ.get(*lat_lng)}
-      it{should be_nil}
-    end
-
-    xcontext 'when tzinfo not installed' do
-      before{
-        expect(Kernel).to receive(:require).
-          with('tzinfo'){p "HERE"; raise LoadError}
-      }
-      it 'should raise informative error' do
-        expect{WhereTZ.get(55.75, 37.616667)}.to \
-          raise_error(LoadError, "Please install tzinfo for using #get")
-      end
-    end
+    its_call(55.75, 37.616667) { is_expected.to ret TZInfo::Timezone.get('Europe/Moscow') }
+    its_call(35.024992, -39.481339) { is_expected.to ret be_nil }
   end
 end

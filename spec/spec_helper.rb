@@ -1,4 +1,5 @@
-#require 'simplecov'
+# require 'simplecov'
 
-$:.unshift 'lib'
 require 'wheretz'
+require 'tzinfo'
+require 'saharspec'
