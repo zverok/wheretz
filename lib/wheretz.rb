@@ -13,10 +13,12 @@ require 'geo_ruby/geojson'
 # # => #<TZInfo::DataTimezone: Europe/Kiev>
 # ```
 module WhereTZ
+  extend self
+
   # @private
   FILES =
-    Dir[File.expand_path('../../data/*.geojson', __FILE__)].
-    map{|f|
+    Dir[File.expand_path('../data/*.geojson', __dir__)].
+    map { |f|
       name = File.basename(f).sub('.geojson', '')
       zone, *coords = name.split('__')
       zone = zone.tr('-', '/')
@@ -28,8 +30,6 @@ module WhereTZ
   # time zone polygons simultaneously.
   AmbigousTimezone = Class.new(RuntimeError)
 
-  module_function
-
   # Time zone name by coordinates.
   #
   # @param lat Latitude (floating point number)
@@ -38,9 +38,7 @@ module WhereTZ
   # @return [String] time zone name or `nil` if no time zone corresponds
   #   to (lat, lng)
   def lookup(lat, lng)
-    candidates =
-      FILES.
-      select{|_f, _z, xr, yr| xr.cover?(lng) && yr.cover?(lat)}
+    candidates = FILES.select { |_f, _z, xr, yr| xr.cover?(lng) && yr.cover?(lat) }
 
     case candidates.size
     when 0 then nil
@@ -75,24 +73,26 @@ module WhereTZ
 
   PARSER = GeoRuby::GeoJSONParser.new
 
-  module_function
-
-  def lookup_geo(lat, lng, candidates)
+  def lookup_geo(lat, lng, candidate_files)
     point = GeoRuby::SimpleFeatures::Point.from_coordinates([lng, lat])
 
-    polygons = candidates.map{|fname, zone, *|
-      [zone, PARSER.parse(File.read(fname)).features.first.geometry]
-    }
-    candidates = polygons.select{|_, multipolygon|
-      multipolygon.geometries.any?{|polygon| polygon.contains_point?(point)}
-    }
+    polygons = candidate_files.map { |fname, zone, *| [zone, geom_from_file(fname)] }
+    candidates = polygons.select { |_, multipolygon| inside_multipolygon?(multipolygon, point) }
 
     case candidates.size
     when 0 then guess_outside(point, polygons)
     when 1 then candidates.first.first
     else
-      fail(AmbigousTimezone, "Ambigous timezone: #{candidates.map(&:first)}")
+      raise(AmbigousTimezone, "Ambigous timezone: #{candidates.map(&:first)}")
     end
+  end
+
+  def geom_from_file(fname)
+    PARSER.parse(File.read(fname)).features.first.geometry
+  end
+
+  def inside_multipolygon?(multipolygon, point)
+    multipolygon.geometries.any? { |polygon| polygon.contains_point?(point) }
   end
 
   # Last resort: pretty slow check for the cases when the point
@@ -100,16 +100,16 @@ module WhereTZ
   # See https://github.com/zverok/wheretz/issues/4
   def guess_outside(point, polygons)
     # create pairs [timezone, distance to closest point of its polygon]
-    distances = polygons.map{|zone, multipolygon|
+    distances = polygons.map { |zone, multipolygon|
       [
         zone,
         multipolygon.geometries.map(&:rings).flatten.
-          map{|p| p.ellipsoidal_distance(point)}.min
+          map { |p| p.ellipsoidal_distance(point) }.min
       ]
     }
 
     # FIXME: maybe need some tolerance range for maximal reasonable distance?
 
-    distances.sort_by(&:last).first.first
+    distances.min_by(&:last).first
   end
 end
