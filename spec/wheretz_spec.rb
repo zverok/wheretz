@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe WhereTZ do
   describe '#lookup' do
     subject { described_class.method(:lookup) }
@@ -23,8 +25,10 @@ describe WhereTZ do
       its_call(35.024992, -39.481339) { is_expected.to ret be_nil }
     end
 
-    xcontext 'when ambiguous timezones' do
-      its_call(125.60, 69.11) { is_expected.to ret be_nil }
+    context 'when ambiguous timezones' do
+      its_call(50.28337, -107.80135) {
+        is_expected.to ret ['America/Regina', 'America/Swift_Current']
+      }
     end
   end
 
@@ -33,5 +37,12 @@ describe WhereTZ do
 
     its_call(55.75, 37.616667) { is_expected.to ret TZInfo::Timezone.get('Europe/Moscow') }
     its_call(35.024992, -39.481339) { is_expected.to ret be_nil }
+
+    context 'when ambiguous timezones' do
+      its_call(50.28337, -107.80135) {
+        is_expected.to ret [TZInfo::Timezone.get('America/Regina'),
+                            TZInfo::Timezone.get('America/Swift_Current')]
+      }
+    end
   end
 end

@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"timezone":"Antarctica/Syowa"},"geometry":{"type":"Polygon","coordinates":[[[25,-86],[30,-86],[45,-86],[55,-86],[55,-64],[25,-68],[25,-86]]]}}]}

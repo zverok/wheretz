@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"timezone":"Antarctica/Vostok"},"geometry":{"type":"Polygon","coordinates":[[[86,-86],[90,-86],[105,-86],[115,-86],[115,-70],[97,-70],[97,-64],[86,-65],[86,-86]]]}}]}

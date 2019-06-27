@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"timezone":"Antarctica/Davis"},"geometry":{"type":"Polygon","coordinates":[[[77.5,-86],[86,-86],[86,-65],[77.5,-68],[77.5,-86]]]}}]}

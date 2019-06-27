@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'geo_ruby'
 require 'geo_ruby/geojson'
 
@@ -66,7 +68,12 @@ module WhereTZ
     end
 
     name = lookup(lat, lng)
-    name && TZInfo::Timezone.get(name)
+    case name
+    when String
+      TZInfo::Timezone.get(name)
+    when Array
+      name.map(&TZInfo::Timezone.method(:get))
+    end
   end
 
   private
@@ -83,7 +90,7 @@ module WhereTZ
     when 0 then guess_outside(point, polygons)
     when 1 then candidates.first.first
     else
-      raise(AmbigousTimezone, "Ambigous timezone: #{candidates.map(&:first)}")
+      candidates.map(&:first)
     end
   end
 
@@ -92,7 +99,12 @@ module WhereTZ
   end
 
   def inside_multipolygon?(multipolygon, point)
-    multipolygon.geometries.any? { |polygon| polygon.contains_point?(point) }
+    case multipolygon
+    when GeoRuby::SimpleFeatures::Polygon
+      multipolygon.contains_point?(point)
+    when GeoRuby::SimpleFeatures::MultiPolygon
+      multipolygon.geometries.any? { |polygon| polygon.contains_point?(point) }
+    end
   end
 
   # Last resort: pretty slow check for the cases when the point

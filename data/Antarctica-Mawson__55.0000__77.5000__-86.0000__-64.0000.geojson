@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"timezone":"Antarctica/Mawson"},"geometry":{"type":"Polygon","coordinates":[[[55,-86],[60,-86],[75,-86],[77.5,-86],[77.5,-68],[55,-64],[55,-86]]]}}]}
