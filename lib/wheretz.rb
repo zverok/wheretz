@@ -28,17 +28,13 @@ module WhereTZ
       [f, zone, minx..maxx, miny..maxy]
     }.freeze
 
-  # Exception (possibly) raised when point is inside several
-  # time zone polygons simultaneously.
-  AmbigousTimezone = Class.new(RuntimeError)
-
   # Time zone name by coordinates.
   #
   # @param lat Latitude (floating point number)
   # @param lng Longitude (floating point number)
   #
-  # @return [String] time zone name or `nil` if no time zone corresponds
-  #   to (lat, lng)
+  # @return [String, nil, Array<String>] time zone name, or `nil` if no time zone corresponds
+  #   to (lat, lng); in rare (yet existing) cases of ambiguous timezones may return an array of names
   def lookup(lat, lng)
     candidates = FILES.select { |_f, _z, xr, yr| xr.cover?(lng) && yr.cover?(lat) }
 
@@ -58,8 +54,9 @@ module WhereTZ
   # @param lat Latitude (floating point number)
   # @param lng Longitude (floating point number)
   #
-  # @return [TZInfo::DataTimezone] timezone object or `nil` if no
-  #   timezone corresponds to (lat, lng)
+  # @return [TZInfo::DataTimezone, nil, Array<TZInfo::DataTimezone>] timezone object or `nil` if no
+  #   timezone corresponds to (lat, lng); in rare (yet existing) cases of ambiguous timezones may
+  #   return an array of timezones
   def get(lat, lng)
     begin
       require 'tzinfo'
@@ -99,23 +96,31 @@ module WhereTZ
   end
 
   def inside_multipolygon?(multipolygon, point)
-    case multipolygon
+    polygons(multipolygon).any? { |polygon| polygon.contains_point?(point) }
+  end
+
+  # Previously each timezones geojson always contained multypolygon, now it can be just
+  # a simple polygon. Make it polymorphic
+  def polygons(geometry)
+    case geometry
     when GeoRuby::SimpleFeatures::Polygon
-      multipolygon.contains_point?(point)
+      [geometry]
     when GeoRuby::SimpleFeatures::MultiPolygon
-      multipolygon.geometries.any? { |polygon| polygon.contains_point?(point) }
+      geometry.geometries
+    else
+      fail ArgumentError, "Unsupported geometry type: #{geometry.class}"
     end
   end
 
   # Last resort: pretty slow check for the cases when the point
   # is slightly outside polygons.
   # See https://github.com/zverok/wheretz/issues/4
-  def guess_outside(point, polygons)
+  def guess_outside(point, geometries)
     # create pairs [timezone, distance to closest point of its polygon]
-    distances = polygons.map { |zone, multipolygon|
+    distances = geometries.map { |zone, multipolygon|
       [
         zone,
-        multipolygon.geometries.map(&:rings).flatten.
+        polygons(multipolygon).map(&:rings).flatten.
           map { |p| p.ellipsoidal_distance(point) }.min
       ]
     }
