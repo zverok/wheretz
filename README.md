@@ -6,9 +6,8 @@ coordinates.
 
 Features:
 
-* quite precise: uses prominent [tz_world_map](http://efele.net/maps/tz/world/)
-  timezones database;
-* quite fast: 0.1-0.2 sec for lookup in worst cases and almost immediate
+* quite precise: uses [timezone-boundary-builder](https://github.com/evansiroky/timezone-boundary-builder), which takes source data from OpenStreetMap;
+* (relatively) fast: 0.1-0.2 sec for lookup in worst cases and almost immediate
   lookup for best cases;
 * no calls to external services, works without Internet connection;
 * no keeping some 50 Mb datafiles in memory or reading them from disk
@@ -41,8 +40,7 @@ wheretz 50.004444,36.231389
 
 ## How it works
 
-1. Latest version of [tz_world_map](http://efele.net/maps/tz/world/) is
-  converted into 400 `data/*.geojson` files;
+1. Latest version of [timezone-boundary-builder](https://github.com/evansiroky/timezone-boundary-builder) dataset is converted into ~400 `data/*.geojson` files;
 2. Each of those files corresponds to one timezone; filename contains
   timezone name and _bounding box_ (min and max latitude and longitude);
 3. On each lookup `WhereTZ` first checks provided coordinates by bounding
@@ -73,16 +71,6 @@ wheretz 50.004444,36.231389
 
 ## License
 
-Data license is described at [tz_world_map](http://efele.net/maps/tz/world/)
-and reads like:
-
->  To the extent possible under law, Eric Muller has waived all copyright
-  and related or neighboring rights to the efele.net/tz maps (comprising
-  the shapefiles, the web pages describing them and the scripts and data
-  used to build them). This work is published from the United States of
-  America.
-
-> Note that this does not affect the rights others may have. I am not
-  qualified to determine whether such rights exist.
+Data license is [ODbL](https://opendatacommons.org/licenses/odbl/).
 
 Code license is usual MIT.
