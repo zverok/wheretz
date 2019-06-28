@@ -108,7 +108,7 @@ module WhereTZ
     when GeoRuby::SimpleFeatures::MultiPolygon
       geometry.geometries
     else
-      fail ArgumentError, "Unsupported geometry type: #{geometry.class}"
+      raise ArgumentError, "Unsupported geometry type: #{geometry.class}"
     end
   end
 
