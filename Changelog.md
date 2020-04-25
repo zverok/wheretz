@@ -1,5 +1,9 @@
 # WhereTZ changelog
 
+## 0.0.3 (2020-04-25)
+
+* Update timezones info to 2019b (latest available from timezone-boundary-builder)
+
 ## 0.0.3 (2019-06-28)
 
 * Data source updated to timezone-boundary-builder (tz_world_map, used previously, is deprecated)

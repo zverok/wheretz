@@ -6,6 +6,8 @@ require 'geo_ruby/geojson'
 # shapefile = GeoRuby::Shp4r::ShpFile.open('script/data/world/tz_world_mp.shp')
 # shapefile = GeoRuby::Shp4r::ShpFile.open('script/data/world/combined-shapefile-with-oceans.shp')
 parser = GeoRuby::GeoJSONParser.new
+
+# TODO: take automatically from https://github.com/evansiroky/timezone-boundary-builder/releases
 parser.parse(File.read('script/data/world/combined-with-oceans.json'))
 
 parser.geometry.features.with_progress.each { |feature|
