@@ -1,6 +1,6 @@
 # WhereTZ changelog
 
-## 0.0.3 (2020-04-25)
+## 0.0.4 (2020-04-25)
 
 * Update timezones info to 2019b (latest available from timezone-boundary-builder)
 
