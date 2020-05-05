@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-its'
   s.add_development_dependency 'saharspec'
 
-  s.add_development_dependency 'rubocop', '~> 0.30'
+  s.add_development_dependency 'rubocop', '~> 0.82'
   s.add_development_dependency 'rubocop-rspec'
 
   s.add_development_dependency 'rmagick'
