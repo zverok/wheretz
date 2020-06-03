@@ -23,7 +23,7 @@ module WhereTZ
     map { |f|
       name = File.basename(f).sub('.geojson', '')
       zone, *coords = name.split('__')
-      zone = zone.tr('-', '/')
+      zone = zone.tr('--', '/')
       minx, maxx, miny, maxy = coords.map(&:to_f)
       [f, zone, minx..maxx, miny..maxy]
     }.freeze
