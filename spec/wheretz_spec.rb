@@ -27,8 +27,12 @@ describe WhereTZ do
 
     context 'when ambiguous timezones' do
       its_call(50.28337, -107.80135) {
-        is_expected.to ret ['America/Regina', 'America/Swift_Current']
+        is_expected.to ret ['America/Swift_Current', 'America/Regina']
       }
+    end
+
+    context 'when timezone name contains hypen(-) char' do
+      its_call(64.56027, 143.22666) { is_expected.to ret('Asia/Ust-Nera') }
     end
   end
 
@@ -40,8 +44,8 @@ describe WhereTZ do
 
     context 'when ambiguous timezones' do
       its_call(50.28337, -107.80135) {
-        is_expected.to ret [TZInfo::Timezone.get('America/Regina'),
-                            TZInfo::Timezone.get('America/Swift_Current')]
+        is_expected.to ret [TZInfo::Timezone.get('America/Swift_Current'),
+                            TZInfo::Timezone.get('America/Regina')]
       }
     end
   end
