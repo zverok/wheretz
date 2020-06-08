@@ -16,9 +16,6 @@ Layout/LineLength:
 Style/BlockDelimiters:
   Enabled: false
 
-Layout/DotPosition:
-  EnforcedStyle: trailing
-
 Style/MultilineBlockChain:
   Enabled: false
 

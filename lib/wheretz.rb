@@ -16,8 +16,8 @@ module WhereTZ
 
   # @private
   FILES =
-    Dir[File.expand_path('../data/*.geojson', __dir__)].
-    map { |f|
+    Dir[File.expand_path('../data/*.geojson', __dir__)]
+    .map { |f|
       name = File.basename(f).sub('.geojson', '')
       zone, *coords = name.split('__')
       zone = zone.gsub('--', '/')
@@ -80,14 +80,14 @@ module WhereTZ
 
     case candidates.size
     # Since switching to tz-boundary-builder, there should be no "empty" spaces anymore
-    when 0 then fail ArgumentError, 'Point outside any known timezone'
+    when 0 then raise ArgumentError, 'Point outside any known timezone'
     when 1 then candidates.first.first
     else candidates.map(&:first)
     end
   end
 
   def geom_from_file(fname)
-    JSON.parse(File.read(fname)).dig('features', 0 , 'geometry')
+    JSON.parse(File.read(fname)).dig('features', 0, 'geometry')
   end
 
   def inside_multipolygon?(multipolygon, point)
@@ -118,7 +118,7 @@ module WhereTZ
         .each_cons(2)
         .select { |(xa, ya), (xb, yb)|
           (yb > y != ya > y) && (x < (xa - xb) * (y - yb) / (ya - yb) + xb)
-        }.size % 2 == 1
+        }.size.odd?
     }
   end
 
@@ -133,8 +133,8 @@ module WhereTZ
     distances = geometries.map { |zone, multipolygon|
       [
         zone,
-        polygons(multipolygon).map(&:rings).flatten.
-          map { |p| p.ellipsoidal_distance(point) }.min
+        polygons(multipolygon).map(&:rings).flatten
+                              .map { |p| p.ellipsoidal_distance(point) }.min
       ]
     }
 
