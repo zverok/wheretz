@@ -25,7 +25,8 @@ describe WhereTZ do
       its_call(35.024992, -39.481339) { is_expected.to ret be_nil }
     end
 
-    context 'when ambiguous timezones' do
+    # FIXME: Can't find new point with overlapping timezones for testing, America/Swift_Current was fixed in 2020a
+    xcontext 'when ambiguous timezones' do
       its_call(50.28337, -107.80135) {
         is_expected.to ret ['America/Swift_Current', 'America/Regina']
       }
@@ -42,7 +43,8 @@ describe WhereTZ do
     its_call(55.75, 37.616667) { is_expected.to ret TZInfo::Timezone.get('Europe/Moscow') }
     its_call(35.024992, -39.481339) { is_expected.to ret be_nil }
 
-    context 'when ambiguous timezones' do
+    # FIXME: Can't find new point with overlapping timezones for testing, America/Swift_Current was fixed in 2020a
+    xcontext 'when ambiguous timezones' do
       its_call(50.28337, -107.80135) {
         is_expected.to ret [TZInfo::Timezone.get('America/Swift_Current'),
                             TZInfo::Timezone.get('America/Regina')]

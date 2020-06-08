@@ -15,7 +15,7 @@ parser.geometry.features.with_progress.each { |feature|
   name = feature.properties['tzid']
   next if name.start_with?('Etc/') # uninhabited zones, just clutter the data (hopefully)
 
-  fname = "data/%s__%.4f__%.4f__%.4f__%.4f.geojson" % [name.gsub('/', '-'), bmin.x, bmax.x, bmin.y, bmax.y]
+  fname = "data/%s__%.4f__%.4f__%.4f__%.4f.geojson" % [name.gsub('/', '--'), bmin.x, bmax.x, bmin.y, bmax.y]
   File.write(fname,
     {
       "type" => "FeatureCollection",
