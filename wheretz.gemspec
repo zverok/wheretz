@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.bindir = 'bin'
   s.executables << 'wheretz'
 
-  s.add_dependency 'georuby', '~> 2.5'
+  s.add_development_dependency 'georuby', '~> 2.5'
 
   s.add_development_dependency 'tzinfo'
 
@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-its'
   s.add_development_dependency 'saharspec'
 
-  s.add_development_dependency 'rubocop', '~> 0.82'
+  s.add_development_dependency 'rubocop', '~> 0.85'
   s.add_development_dependency 'rubocop-rspec'
 
   s.add_development_dependency 'rmagick'
