@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name     = 'wheretz'
-  s.version  = '0.0.5'
+  s.version  = '0.0.6'
   s.authors  = ['Victor Shepelev']
   s.email    = 'zverok.offline@gmail.com'
   s.homepage = 'https://github.com/zverok/wheretz'
@@ -34,8 +34,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-its'
   s.add_development_dependency 'saharspec'
 
-  s.add_development_dependency 'rubocop', '~> 0.85'
+  s.add_development_dependency 'rubocop'
   s.add_development_dependency 'rubocop-rspec'
+  s.add_development_dependency 'rubocop-rake'
 
   s.add_development_dependency 'rmagick'
   s.add_development_dependency 'dbf'

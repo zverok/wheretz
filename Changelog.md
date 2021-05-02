@@ -1,6 +1,12 @@
 # WhereTZ changelog
 
-## 0.0.4 (2020-04-25)
+## 0.0.6 (2020-05-02)
+
+* Update timezones info to 2020d (latest available in [
+timezone-boundary-builder](https://github.com/evansiroky/timezone-boundary-builder/releases), though there is [2021a](https://www.iana.org/time-zones) already...);
+* Slight code style updates.
+
+## 0.0.5 (2020-04-25)
 
 * Update timezones info to 2020a;
 * Change timezone files naming to fix problems with zones named like `Asia/Ust-Nera` ([@jotolo](https://github.com/jotolo), [#9](https://github.com/zverok/wheretz/pull/9));

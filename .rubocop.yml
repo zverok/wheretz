@@ -1,4 +1,6 @@
-require: rubocop-rspec
+require:
+  - rubocop-rspec
+  - rubocop-rake
 
 AllCops:
   Include:
@@ -8,6 +10,8 @@ AllCops:
     - 'bin/**/*'
     - 'vendor/**/*'
     - 'script/**/*'
+  NewCops: enable
+  TargetRubyVersion: 2.5
 
 Layout/LineLength:
   Max: 100
@@ -22,11 +26,15 @@ Style/MultilineBlockChain:
 Metrics/MethodLength:
   Max: 15
 
+RSpec:
+  Language:
+    Examples:
+      Regular:
+        - its_call
+        - its_map
+
 RSpec/ImplicitSubject:
   Enabled: false
-
-RSpec/EmptyExampleGroup:
-  CustomIncludeMethods: [its_call, its_map]
 
 RSpec/FilePath:
   Enabled: false

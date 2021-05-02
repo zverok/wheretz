@@ -5,8 +5,9 @@ describe WhereTZ do
     subject { described_class.method(:lookup) }
 
     context 'when unambiguous bounding box: Moscow' do
-      its_call(55.75, 37.616667) { is_expected.to ret('Europe/Moscow') }
-      its_call(55.75, 37.616667) { is_expected.not_to send_message(File, :read) }
+      its_call(55.75, 37.616667) {
+        is_expected.to ret('Europe/Moscow').and dont.send_message(File, :read)
+      }
     end
 
     context 'when ambiguous bounding box: Kharkiv' do
@@ -22,7 +23,7 @@ describe WhereTZ do
     end
 
     context 'when no timezone: middle of the ocean' do
-      its_call(35.024992, -39.481339) { is_expected.to ret be_nil }
+      its_call(35.024992, -39.481339) { is_expected.to ret nil }
     end
 
     # FIXME: Can't find new point with overlapping timezones for testing, America/Swift_Current was fixed in 2020a
@@ -33,7 +34,7 @@ describe WhereTZ do
     end
 
     context 'when timezone name contains hypen(-) char' do
-      its_call(64.56027, 143.22666) { is_expected.to ret('Asia/Ust-Nera') }
+      its_call(64.56027, 143.22666) { is_expected.to ret 'Asia/Ust-Nera' }
     end
   end
 
@@ -41,7 +42,7 @@ describe WhereTZ do
     subject { described_class.method(:get) }
 
     its_call(55.75, 37.616667) { is_expected.to ret TZInfo::Timezone.get('Europe/Moscow') }
-    its_call(35.024992, -39.481339) { is_expected.to ret be_nil }
+    its_call(35.024992, -39.481339) { is_expected.to ret nil }
 
     # FIXME: Can't find new point with overlapping timezones for testing, America/Swift_Current was fixed in 2020a
     xcontext 'when ambiguous timezones' do
