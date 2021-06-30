@@ -36,6 +36,10 @@ describe WhereTZ do
     context 'when timezone name contains hypen(-) char' do
       its_call(64.56027, 143.22666) { is_expected.to ret 'Asia/Ust-Nera' }
     end
+
+    context 'when timezone has a hole' do
+      its_call(35.93, -110.60) { is_expected.to ret 'America/Phoenix' }
+    end
   end
 
   describe '#get' do

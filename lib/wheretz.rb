@@ -110,16 +110,20 @@ module WhereTZ
     end
   end
 
-  def contains_point?(polygon, (x, y))
-    # Taken from GeoRuby's Polygon#contains_point?, which just delegates to LinearRing#contains_point?
+  def contains_point?(polygon, point)
+    # Adapted from GeoRuby's Polygon#contains_point?, which just delegates to LinearRing#contains_point?
     # Polygon's geometry is just an array of linear ring; linear ring is array of points.
-    polygon.any? { |points|
-      [*points, points.first]
-        .each_cons(2)
-        .select { |(xa, ya), (xb, yb)|
-          (yb > y != ya > y) && (x < (xa - xb) * (y - yb) / (ya - yb) + xb)
-        }.size.odd?
-    }
+    # Changed from GeoRuby to properly handle interior rings/holes.
+    ring_contains_point?(polygon.first, point) &&
+      polygon[1..-1].none? { |points| ring_contains_point?(points, point) }
+  end
+
+  def ring_contains_point?(points, (x, y))
+    [*points, points.first]
+      .each_cons(2)
+      .select { |(xa, ya), (xb, yb)|
+        (yb > y != ya > y) && (x < (xa - xb) * (y - yb) / (ya - yb) + xb)
+      }.size.odd?
   end
 
   # Last resort: pretty slow check for the cases when the point
