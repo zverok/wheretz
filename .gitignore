@@ -7,3 +7,4 @@ script/data/**/*.*
 doc
 .yardoc
 pkg
+**.DS_Store

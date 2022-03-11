@@ -25,6 +25,12 @@ WhereTZ.lookup(50.004444, 36.231389) # (lat, lng) order
 WhereTZ.get(50.004444, 36.231389)
 # => #<TZInfo::DataTimezone: Europe/Kiev>
 
+WhereTZ.lookup(-65.2506813, 36.805389)
+# => ArgumentError (Point outside any known timezone)
+
+WhereTZ.lookup(-65.2506813, 36.805389, include_oceans: true)
+# => 'Etc/GMT-2'
+
 # you should have tzinfo gem installed, wheretz doesn't list it as dependency
 ```
 
@@ -37,11 +43,11 @@ wheretz 50.004444,36.231389
 
 ## How it works
 
-1. Latest version of [timezone-boundary-builder](https://github.com/evansiroky/timezone-boundary-builder) dataset is converted into ~400 `data/*.geojson` files;
+1. Latest version of [timezone-boundary-builder](https://github.com/evansiroky/timezone-boundary-builder) dataset is converted into ~1400 `data/*.geojson` files;
 2. Each of those files corresponds to one timezone; filename contains timezone name and _bounding box_ (min and max latitude and longitude);
 3. On each lookup `WhereTZ` first checks provided coordinates by bounding boxes, and if only one bbox (extracted from filename) corresponds to them, returns timezone name immediately;
 4. If there's several intersecting bounding boxes, `WhereTZ` reads only relevant timezone files (which are not very large) and checks which polygon actually contains the point.
-
+5. By default `WhereTZ` ignores timezones over ocean areas, this improves performance considerably.
 ## Known problems
 
 * Loading/unloading `.geojson` files can be uneffective when called  multiple times; future releases will provide option for preserve data in memory, or for mass lookup of points;

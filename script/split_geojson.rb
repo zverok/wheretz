@@ -1,20 +1,27 @@
 require 'bundler/setup'
-require 'progress_bar/core_ext/enumerable_with_progress'
 require 'geo_ruby'
 require 'geo_ruby/geojson'
+require 'open-uri'
+require 'zip'
 
-# shapefile = GeoRuby::Shp4r::ShpFile.open('script/data/world/tz_world_mp.shp')
-# shapefile = GeoRuby::Shp4r::ShpFile.open('script/data/world/combined-shapefile-with-oceans.shp')
-parser = GeoRuby::GeoJSONParser.new
+# download and unzip latest data
+data_source_file_name = 'timezones-with-oceans.geojson.zip'
+unzipped_file_name = 'combined-with-oceans.json'
 
-# TODO: take automatically from https://github.com/evansiroky/timezone-boundary-builder/releases
-parser.parse(File.read('script/data/world/combined-with-oceans.json'))
+unless File.exist?(data_source_file_name)
+  open(data_source_file_name, 'wb') do |file|
+    file << open("https://github.com/evansiroky/timezone-boundary-builder/releases/latest/download/#{data_source_file_name}").read
+  end
+  # unzip into
+  Zip::File.open(data_source_file_name) do |zip_file|
+    zip_file.each do |f|
+      zip_file.extract(f, unzipped_file_name) unless File.exist?(unzipped_file_name)
+    end
+  end
+end
 
-parser.geometry.features.with_progress.each { |feature|
-  bmin, bmax = feature.geometry.bounding_box
-  name = feature.properties['tzid']
-  next if name.start_with?('Etc/') # uninhabited zones, just clutter the data (hopefully)
-
+def write_geojson(name, polygon)
+  bmin, bmax = polygon.bounding_box
   fname = "data/%s__%.4f__%.4f__%.4f__%.4f.geojson" % [name.gsub('/', '--'), bmin.x, bmax.x, bmin.y, bmax.y]
   File.write(fname,
     {
@@ -23,29 +30,24 @@ parser.geometry.features.with_progress.each { |feature|
         {
           "type" => "Feature",
           "properties" => {'timezone' => name},
-          "geometry" => feature.geometry.as_json
+          "geometry" => polygon.as_json
         }
       ]
     }.to_json
   )
-}
+end
 
-# shapefile.with_progress.map{|shp|
-#   bmin, bmax = shp.geometry.bounding_box
-#   name = shp.data.attributes['TZID']
-#   next if name == 'uninhabited'
+parser = GeoRuby::GeoJSONParser.new
+parser.parse(File.read(unzipped_file_name))
 
-#   fname = "data/%s__%.4f__%.4f__%.4f__%.4f.geojson" % [name.gsub('/', '-'), bmin.x, bmax.x, bmin.y, bmax.y]
-#   File.write(fname,
-#     {
-#       "type" => "FeatureCollection",
-#       "features" => [
-#         {
-#           "type" => "Feature",
-#           "properties" => {'timezone' => shp.data.attributes['TZID']},
-#           "geometry" => shp.geometry.as_json
-#         }
-#       ]
-#     }.to_json
-#   )
-# }
+parser.geometry.features.each do |feature|
+  name = feature.properties['tzid']
+
+  if feature.respond_to?(:geometry) && feature.geometry.class == GeoRuby::SimpleFeatures::MultiPolygon
+    for polygon in feature.geometry.geometries do
+      write_geojson(name, polygon)
+    end
+  else
+    write_geojson(name, feature.geometry)
+  end
+end

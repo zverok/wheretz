@@ -10,6 +10,12 @@
 #
 # WhereTZ.get(50.004444, 36.231389)
 # # => #<TZInfo::DataTimezone: Europe/Kiev>
+#
+# WhereTZ.lookup(-65.2506813, 36.805389)
+# # => ArgumentError (Point outside any known timezone)
+#
+# WhereTZ.lookup(-65.2506813, 36.805389, include_oceans: true)
+# # => 'Etc/GMT-2'
 # ```
 module WhereTZ
   extend self
@@ -29,11 +35,15 @@ module WhereTZ
   #
   # @param lat Latitude (floating point number)
   # @param lng Longitude (floating point number)
+  # @param opts Options (hash, include_oceans currently supported)
   #
   # @return [String, nil, Array<String>] time zone name, or `nil` if no time zone corresponds
   #   to (lat, lng); in rare (yet existing) cases of ambiguous timezones may return an array of names
-  def lookup(lat, lng)
-    candidates = FILES.select { |_f, _z, xr, yr| xr.cover?(lng) && yr.cover?(lat) }
+  def lookup(lat, lng, opts = {})
+    candidates = FILES.select do |_f, z, xr, yr|
+      next if z.start_with?('Etc') && opts[:include_oceans] != true
+      xr.cover?(lng) && yr.cover?(lat)
+    end
 
     case candidates.size
     when 0 then nil
@@ -54,14 +64,14 @@ module WhereTZ
   # @return [TZInfo::DataTimezone, nil, Array<TZInfo::DataTimezone>] timezone object or `nil` if no
   #   timezone corresponds to (lat, lng); in rare (yet existing) cases of ambiguous timezones may
   #   return an array of timezones
-  def get(lat, lng)
+  def get(lat, lng, opts = {})
     begin
       require 'tzinfo'
     rescue LoadError
       raise LoadError, 'Please install tzinfo for using #get'
     end
 
-    name = lookup(lat, lng)
+    name = lookup(lat, lng, opts)
     case name
     when String
       TZInfo::Timezone.get(name)
