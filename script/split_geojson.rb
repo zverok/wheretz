@@ -3,8 +3,6 @@ require 'geo_ruby'
 require 'geo_ruby/geojson'
 require 'open-uri'
 require 'zip'
-require 'byebug'
-
 
 # download and unzip latest data
 data_source_file_name = 'timezones-with-oceans.geojson.zip'
@@ -24,7 +22,7 @@ end
 
 def write_geojson(name, polygon)
   bmin, bmax = polygon.bounding_box
-  fname = "tzdata/%s__%.4f__%.4f__%.4f__%.4f.geojson" % [name.gsub('/', '--'), bmin.x, bmax.x, bmin.y, bmax.y]
+  fname = "data/%s__%.4f__%.4f__%.4f__%.4f.geojson" % [name.gsub('/', '--'), bmin.x, bmax.x, bmin.y, bmax.y]
   File.write(fname,
     {
       "type" => "FeatureCollection",
