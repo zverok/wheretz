@@ -37,12 +37,11 @@ module WhereTZ
   def lookup(lat, lng)
     candidates = FILES.select { |_f, _z, xr, yr| xr.cover?(lng) && yr.cover?(lat) }
 
-    case candidates.size
-    when 0 then nil
-    when 1 then candidates.first[1]
-    else
-      lookup_geo(lat, lng, candidates)
-    end
+    
+    return nil if candidates.size == 0
+    return candidates.first[1] if candidates.size == 1
+    
+    lookup_geo(lat, lng, candidates)
   end
 
   # `TZInfo::DataTimezone` object by coordinates.
